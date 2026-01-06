@@ -3,12 +3,14 @@
 import { RadioPlayer } from "@/components/Player/RadioPlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { weeklySchedule } from "@/data/schedule";
+import { weeklySchedule, ScheduleItem } from "@/data/schedule"; // Import ScheduleItem
 import { cn } from "@/lib/utils";
-import { BookOpen, Calendar, Mic2 } from "lucide-react";
+import { Mic2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnnouncementCarousel } from "./AnnouncementCarousel";
 import { ListeningFromForm } from "./ListeningFromForm";
+import { ImageGallery } from "./ImageGallery"; // Import the new ImageGallery component
+import { isWithinInterval, parse, addHours, subHours } from 'date-fns'; // Import date-fns functions
 
 interface ListeningDetails {
   name: string;
@@ -18,6 +20,19 @@ interface ListeningDetails {
 }
 
 const LISTENING_DETAILS_KEY = 'listeningDetails';
+
+// Helper function to check if a schedule item is active within a 3-hour window
+const isNowActive = (item: ScheduleItem): boolean => {
+  const now = new Date();
+  const startTime = parse(item.startTime, 'hh:mm a', now);
+  const endTime = parse(item.endTime, 'hh:mm a', now);
+
+  // Define a 3-hour window around the start time (1.5 hours before and 1.5 hours after)
+  const windowStart = subHours(startTime, 1.5);
+  const windowEnd = addHours(startTime, 1.5);
+
+  return isWithinInterval(now, { start: windowStart, end: windowEnd });
+};
 
 export const HomePageClient: React.FC = () => {
   const [isListeningFormOpen, setIsListeningFormOpen] = useState(false);
@@ -67,7 +82,7 @@ export const HomePageClient: React.FC = () => {
                   <p className="font-semibold">{item.title}</p>
                   <p className="text-xs text-muted-foreground">{item.time}</p>
                 </div>
-                {item.active && (
+                {isNowActive(item) && ( // Use the new isNowActive helper
                   <Badge variant="outline" className="ml-auto text-primary border-primary/20">
                     NOW
                   </Badge>
@@ -94,28 +109,8 @@ export const HomePageClient: React.FC = () => {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="group relative overflow-hidden rounded-3xl bg-primary p-8 text-primary-foreground">
-          <div className="relative z-10">
-            <h4 className="text-2xl font-serif font-bold mb-2">Latest Teachings</h4>
-            <p className="mb-6 opacity-90">Deepen your faith with our audio and video collection.</p>
-            <Button variant="secondary" className="rounded-full">
-              <BookOpen className="mr-2 h-4 w-4" /> Browse Library
-            </Button>
-          </div>
-          <BookOpen className="absolute -bottom-4 -right-4 h-32 w-32 opacity-10" />
-        </div>
-        <div className="group relative overflow-hidden rounded-3xl bg-accent p-8 text-accent-foreground">
-          <div className="relative z-10">
-            <h4 className="text-2xl font-serif font-bold mb-2">Upcoming Events</h4>
-            <p className="mb-6 opacity-90">Join our community in prayer and celebration.</p>
-            <Button variant="outline" className="rounded-full bg-background/50 backdrop-blur-sm">
-              <Calendar className="mr-2 h-4 w-4" /> View Events
-            </Button>
-          </div>
-          <Calendar className="absolute -bottom-4 -right-4 h-32 w-32 opacity-10" />
-        </div>
-      </section>
+      <ImageGallery /> {/* New Image Gallery section */}
+
       <ListeningFromForm
         isOpen={isListeningFormOpen}
         onClose={() => setIsListeningFormOpen(false)}
