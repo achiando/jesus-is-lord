@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 interface Program {
   title: string;

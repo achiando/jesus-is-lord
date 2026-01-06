@@ -1,6 +1,7 @@
 import { MobileNav } from "@/components/Navigation/MobileNav"; // Import the new MobileNav
 import { Header } from "@/components/shared/Header"; // Import the new Header
 import { RadioPlayerProvider } from "@/lib/context/RadioPlayerContext"; // Import RadioPlayerProvider
+import { MiniPlayerWrapper } from "@/components/Player/MiniPlayerWrapper"; // Import MiniPlayerWrapper
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -39,12 +40,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased min-h-screen bg-background`}>
+    <html lang="en">
+      <body className={`font-sans antialiased min-h-screen bg-background p-4`}>
         <RadioPlayerProvider>
           <Header /> {/* New Header component */}
-          <main className="pb-16 lg:pb-0">{children}</main> {/* Adjusted padding for mobile nav */}
+          <main className="pb-16 lg:pb-0 lg:max-w-screen-xl lg:mx-auto">{children}</main> {/* Adjusted padding and added max-width for desktop centering */}
           <MobileNav /> {/* New MobileNav component */}
+          <MiniPlayerWrapper /> {/* Mini-player wrapper */}
           <Analytics />
         </RadioPlayerProvider>
       </body>

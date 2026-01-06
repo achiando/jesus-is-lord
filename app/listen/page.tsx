@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils"
-import { RadioPlayer } from "@/components/Player/RadioPlayer" // Import the new RadioPlayer
-import { LiveChat } from "@/components/live-chat"
-import { Clock, Globe, Languages } from "lucide-react"
+import { RadioPlayer } from "@/components/Player/RadioPlayer"; // Import the new RadioPlayer
+import { cn } from "@/lib/utils";
+import { Clock, Globe, Languages } from "lucide-react";
+import { FloatingChat } from "./_components/FloatingChat"; // Import the new FloatingChat
 
 export default function ListenPage() {
   return (
-    <div className="container py-8 md:py-12">
+    <div className="container py-8 md:py-12 p-4">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-7 flex flex-col gap-8">
           <div className="space-y-4">
@@ -14,7 +14,7 @@ export default function ListenPage() {
           </div>
           <RadioPlayer variant="page-full" /> {/* Use the new RadioPlayer with variant */}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {[
               { label: "Listeners", value: "12,450", icon: Globe },
               { label: "Uptime", value: "99.9%", icon: Clock },
@@ -30,15 +30,17 @@ export default function ListenPage() {
             ))}
           </div>
 
-          <div className="lg:hidden">
-            <LiveChat />
-          </div>
+          {/* The FloatingChat component will handle its own visibility */}
+          {/* <div className="lg:hidden">
+            <FloatingChat />
+          </div> */}
         </div>
 
         <div className="lg:col-span-5 space-y-6">
-          <div className="hidden lg:block">
-            <LiveChat />
-          </div>
+          {/* The FloatingChat component will handle its own visibility */}
+          {/* <div className="hidden lg:block">
+            <FloatingChat />
+          </div> */}
 
           <h3 className="text-xl font-serif font-bold">Today's Schedule</h3>
           <div className="space-y-4">
@@ -72,6 +74,7 @@ export default function ListenPage() {
           </div>
         </div>
       </div>
+      <FloatingChat /> {/* Add the FloatingChat component at the root of the page */}
     </div>
   )
 }

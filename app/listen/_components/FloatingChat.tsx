@@ -1,14 +1,13 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image'; // Import Image component
-import { MessageSquare, X, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { ChatUserDetailsForm } from './ChatUserDetailsForm';
-import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'; // Assuming shadcn/ui Avatar is available
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { MessageSquare, Send, X } from 'lucide-react';
+import Image from 'next/image'; // Import Image component
+import React, { useEffect, useRef, useState } from 'react';
+import { ChatUserDetailsForm } from './ChatUserDetailsForm';
 
 interface UserDetails {
   fullName: string;
@@ -87,7 +86,7 @@ export const FloatingChat: React.FC = () => {
         variant="default"
         size="icon"
         className={cn(
-          "fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full shadow-lg transition-all duration-300",
+          "fixed bottom-40 right-4 z-50 h-14 w-14 rounded-full shadow-lg transition-all duration-300",
           isOpen ? "rotate-90 bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue-700"
         )}
         onClick={toggleChat}

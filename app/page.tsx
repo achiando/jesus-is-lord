@@ -1,8 +1,9 @@
 import { RadioPlayer } from "@/components/Player/RadioPlayer"; // Import the new RadioPlayer
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { BookOpen, Calendar, Mic2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { weeklySchedule } from "@/data/schedule";
+import { cn } from "@/lib/utils";
+import { BookOpen, Calendar, Mic2 } from "lucide-react";
 
 export default function Home() {
   return (
@@ -19,19 +20,15 @@ export default function Home() {
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { title: "Morning Devotion", time: "06:00 AM", active: false },
-            { title: "Gospel Hour", time: "10:00 AM", active: true },
-            { title: "Evening Prayer", time: "06:00 PM", active: false },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl border bg-card shadow-sm">
+          {weeklySchedule.slice(0, 3).map((item) => (
+            <div key={item.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-card shadow-sm">
               <div
                 className={cn(
                   "p-3 rounded-full",
                   item.active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground",
                 )}
               >
-                <Mic2 className="h-5 w-5" />
+                {item.icon || <Mic2 className="h-5 w-5" />}
               </div>
               <div>
                 <p className="font-semibold">{item.title}</p>

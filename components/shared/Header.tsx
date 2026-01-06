@@ -1,11 +1,10 @@
 "use client"
 
-import Link from "next/link"
-import Image from "next/image"
-import { Globe, Bell, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { DesktopNav } from "@/components/Navigation/DesktopNav" // Import DesktopNav
+import { DesktopNav } from "@/components/Navigation/DesktopNav"; // Import DesktopNav
+import { Button } from "@/components/ui/button";
+import { Bell, Globe } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 // MobileNav is the bottom bar, not part of the header sheet trigger
 
 // Placeholder for Language Selector
@@ -50,27 +49,6 @@ export function Header() {
 
         {/* Mobile Menu Trigger and Logo */}
         <div className="lg:hidden flex items-center justify-between w-full">
-            <Sheet>
-                <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="shrink-0">
-                        <Menu className="h-5 w-5" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left">
-                    <nav className="grid gap-6 text-lg font-medium">
-                        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-                            <Image src="/logo.png" alt="Jesus Is Lord Radio" width={32} height={32} />
-                            <span className="sr-only">Jesus Is Lord Radio</span>
-                        </Link>
-                        <Link href="/">Home</Link>
-                        <Link href="/listen">Radio</Link>
-                        <Link href="/teachings">Teachings</Link>
-                        <Link href="/events">Events</Link>
-                        <Link href="/more">More</Link> {/* Mobile 'More' link */}
-                    </nav>
-                </SheetContent>
-            </Sheet>
             <Link href="/" className="flex items-center gap-2">
                 <Image src="/logo.png" alt="Jesus Is Lord Radio" width={28} height={28} />
                 <span className="font-bold text-md">Jesus Is Lord Radio</span>
