@@ -1,9 +1,8 @@
-import React from 'react';
-import { Platforms } from './Platforms';
-import { ContactInfo } from './ContactInfo';
+import { Facebook, Instagram, MessageCircle, Twitter } from 'lucide-react'; // Using MessageCircle for a generic social icon
 import Image from 'next/image';
 import Link from 'next/link';
-import { Facebook, Twitter, Instagram, MessageCircle } from 'lucide-react'; // Using MessageCircle for a generic social icon
+import { ContactInfo } from './ContactInfo';
+import { Platforms } from './Platforms';
 
 const socialLinks = [
   { name: 'Facebook', href: '#', icon: <Facebook className="h-5 w-5" /> },
@@ -48,7 +47,7 @@ export const Footer = () => {
         <div className="mt-12 border-t pt-8">
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
             <p className="font-bold">Important Notice</p>
-            <p className="text-sm">Nobody should ask for any money in the name of the Prophet. These are conmen. All tithes and offerings should be given directly through official church channels.</p>
+            <p className="text-sm">Nobody should ask for any money in the name of the Prophet. These are conmen.</p>
           </div>
         </div>
 

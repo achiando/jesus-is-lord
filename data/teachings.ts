@@ -1,95 +1,66 @@
-export interface TeachingCardProps {
-  type: 'audio' | 'video' | 'article';
+// data/teachings.ts
+
+export interface Playlist {
+  platform: 'spotify' | 'youtube';
+  playlistId: string;
   title: string;
-  speaker?: string;
-  series?: string;
-  duration?: string;
-  date?: string;
   description: string;
-  thumbnail: string;
-  link: string;
-  downloadLink?: string;
-  spotifyLink?: string;
-  spotifyEmbedUrl?: string;
 }
 
-export const audioTeachings: TeachingCardProps[] = [
+export interface Document {
+  title: string;
+  description: string;
+  link: string;
+  type: 'pdf' | 'google-doc' | 'web-link';
+}
+
+export const audioPlaylists: Playlist[] = [
   {
-    type: "audio",
-    title: "Walking in Divine Purpose",
-    speaker: "Senior Pastor John Doe",
-    series: "Foundations of Faith",
-    duration: "45:20",
-    description: "Discover how to align your daily walk with God's eternal plan for your life and ministry.",
-    thumbnail: "/images/teaching-cover-1.jpg",
-    link: "#",
-    downloadLink: "#",
+    platform: 'spotify',
+    playlistId: '1xD1LP2bWQx2KPBktwZlsf', // Example Playlist ID
+    title: 'Sunday Sermons',
+    description: 'Listen to the powerful Sunday service teachings from the main altar.',
   },
   {
-    type: "audio",
-    title: "The Power of Forgiveness",
-    speaker: "Dr. Sarah Adams",
-    series: "Living by Grace",
-    duration: "30:15",
-    description: "Learn about the liberating power of forgiveness and how it transforms your life.",
-    thumbnail: "/images/teaching-cover-2.jpg",
-    link: "#",
-    downloadLink: "#",
-  },
-  {
-    type: "audio",
-    title: "Faith in Action",
-    speaker: "Pastor David Chen",
-    series: "Practical Christianity",
-    duration: "55:00",
-    description: "Understand how to put your faith into action and see God's promises manifest.",
-    thumbnail: "/images/spotify-cover-1.jpg",
-    link: "#",
-    spotifyLink: "https://open.spotify.com/show/2U0AsCwsoPnNwtDMQ8j775",
-    spotifyEmbedUrl: "https://open.spotify.com/embed/show/2U0AsCwsoPnNwtDMQ8j775",
+    platform: 'spotify',
+    playlistId: '37i9dQZF1DXaB4n0u6914s', // Example Playlist ID
+    title: 'Mid-Week Services',
+    description: 'Catch up on the anointed teachings from our mid-week fellowship.',
   },
 ];
 
-export const videoTeachings: TeachingCardProps[] = [
+export const videoPlaylists: Playlist[] = [
   {
-    type: "video",
-    title: "Understanding the Holy Spirit",
-    speaker: "Bishop Michael",
-    series: "Divine Encounters",
-    duration: "60:00",
-    description: "A deep dive into the person and work of the Holy Spirit in a believer's life.",
-    thumbnail: "/images/video-cover-1.jpg",
-    link: "#",
+    platform: 'youtube',
+    playlistId: 'PL2MI0fUR_b4s4z_4a6I0Y3f5s_gK8dJ_', // Example Playlist ID
+    title: 'Healing & Deliverance Services',
+    description: 'Watch the powerful move of God in our Healing and Deliverance services.',
   },
   {
-    type: "video",
-    title: "The Kingdom of God",
-    speaker: "Evangelist Grace",
-    series: "Gospel Truths",
-    duration: "40:00",
-    description: "Explore the principles and realities of God's kingdom and how to live in it.",
-    thumbnail: "/images/video-cover-2.jpg",
-    link: "#",
+    platform: 'youtube',
+    playlistId: 'PL2MI0fUR_b4v3pW3h-A3i_jO-G4gK8dJ_', // Example Playlist ID
+    title: 'National Youth Conferences',
+    description: 'Highlights and full sessions from our national youth conferences.',
   },
 ];
 
-export const articles: TeachingCardProps[] = [
+export const documents: Document[] = [
   {
-    type: "article",
-    title: "The Importance of Daily Devotion",
-    date: "Jan 15, 2024",
-    description: "Discover why a consistent daily devotion time is crucial for spiritual growth and intimacy with God.",
-    thumbnail: "/images/article-cover-1.jpg",
-    link: "#",
-    downloadLink: "#",
+    title: 'The Importance of Daily Devotion',
+    description: 'A guide to establishing a consistent and fruitful daily devotion time for spiritual growth.',
+    link: '#', // Placeholder for a direct link to a PDF or Google Doc
+    type: 'pdf',
   },
   {
-    type: "article",
-    title: "Navigating Life's Challenges with Faith",
-    date: "Dec 20, 2023",
-    description: "Practical steps and biblical principles to overcome adversity and maintain your faith.",
-    thumbnail: "/images/article-cover-2.jpg",
-    link: "#",
-    downloadLink: "#",
+    title: 'Navigating Life\'s Challenges with Faith',
+    description: 'Biblical principles to overcome adversity and maintain your faith in difficult seasons.',
+    link: '#', // Placeholder
+    type: 'google-doc',
+  },
+  {
+    title: 'Foundations of Faith: A Study Guide',
+    description: 'A comprehensive study guide on the foundational doctrines of our faith.',
+    link: '#', // Placeholder
+    type: 'pdf',
   },
 ];
