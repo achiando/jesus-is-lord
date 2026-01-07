@@ -1,50 +1,63 @@
 "use client"
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { weeklySchedule, ScheduleItem } from '@/data/schedule'; // Import schedule
 
-interface Program {
-  title: string;
-  host: string;
+// Extend Program to include an image for the player
+interface Program extends ScheduleItem {
   backgroundImage?: string;
 }
 
 interface RadioPlayerContextType {
   isPlaying: boolean;
-  isLive: boolean; // This will eventually come from an API
+  isLive: boolean;
+  volume: number;
   currentProgram: Program | null;
   togglePlayPause: () => void;
-  // Add other controls as needed, e.g., setVolume, seek, etc.
+  setVolume: (volume: number) => void;
 }
 
 const RadioPlayerContext = createContext<RadioPlayerContextType | undefined>(undefined);
 
-export const RadioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLive, setIsLive] = useState(true); // Default to true for now, will be dynamic
-  const [currentProgram, setCurrentProgram] = useState<Program | null>({
-    title: "Morning Devotion",
-    host: "Pastor John",
-    backgroundImage: "/images/default-program-bg.jpg", // Placeholder
+// Helper to get the current program based on time
+const getCurrentProgram = (): Program | null => {
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  const activeProgram = weeklySchedule.find(item => {
+    const [startHour, startMinute] = item.startTime.split(':').map(Number);
+    const [endHour, endMinute] = item.endTime.split(':').map(Number);
+    const startTimeInMinutes = startHour * 60 + startMinute;
+    const endTimeInMinutes = endHour * 60 + endMinute;
+    return currentTime >= startTimeInMinutes && currentTime < endTimeInMinutes;
   });
 
+  return activeProgram || weeklySchedule[0] || null; // Fallback to the first item
+};
+
+
+export const RadioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLive, setIsLive] = useState(true);
+  const [volume, setVolumeState] = useState(0.8);
+  const [currentProgram, setCurrentProgram] = useState<Program | null>(getCurrentProgram());
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const streamUrl = process.env.NEXT_PUBLIC_RADIO_STREAM_URL || "http://stream.radio.co/s0d4f5e6c7/listen"; // Default for testing
+  const streamUrl = process.env.NEXT_PUBLIC_RADIO_STREAM_URL || "http://stream.radio.co/s0d4f5e6c7/listen";
 
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio(streamUrl);
-      audioRef.current.preload = "none"; // Don't load until play is pressed
-      audioRef.current.volume = 0.8; // Default volume
+      audioRef.current.preload = "none";
     }
+    audioRef.current.volume = volume;
 
     const audio = audioRef.current;
-
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
     const handleError = (e: Event) => {
       console.error("Audio error:", e);
       setIsPlaying(false);
-      // Potentially try to reconnect or show an error message
     };
 
     audio.addEventListener('play', handlePlay);
@@ -55,13 +68,11 @@ export const RadioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('error', handleError);
-      // Do not destroy audio object here, it's a singleton
     };
-  }, [streamUrl]);
+  }, [streamUrl, volume]);
 
   const togglePlayPause = useCallback(() => {
     if (!audioRef.current) return;
-
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -69,27 +80,28 @@ export const RadioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [isPlaying]);
 
-  // You might want to fetch live status and current program from an API here
-  useEffect(() => {
-    // Example: Fetch live status and program every 30 seconds
-    const fetchRadioStatus = async () => {
-      // In a real app, this would be an API call
-      // For now, we'll simulate it
-      // setIsLive(Math.random() > 0.5); // Simulate live status changing
-      // setCurrentProgram(...)
-    };
-
-    fetchRadioStatus();
-    const interval = setInterval(fetchRadioStatus, 30000); // Poll every 30 seconds
-    return () => clearInterval(interval);
+  const setVolume = useCallback((newVolume: number) => {
+    if (audioRef.current) {
+      const clampedVolume = Math.max(0, Math.min(1, newVolume));
+      audioRef.current.volume = clampedVolume;
+      setVolumeState(clampedVolume);
+    }
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentProgram(getCurrentProgram());
+    }, 60000); // Update program every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const value = {
     isPlaying,
     isLive,
+    volume,
     currentProgram,
     togglePlayPause,
+    setVolume,
   };
 
   return (

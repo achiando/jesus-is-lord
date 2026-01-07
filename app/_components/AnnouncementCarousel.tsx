@@ -1,9 +1,10 @@
 "use client"
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface Announcement {
   id: string;
@@ -45,53 +46,67 @@ const announcements: Announcement[] = [
 ];
 
 export const AnnouncementCarousel: React.FC = () => {
-  const [api, setApi] = React.useState<CarouselApi>(); // Use useState for api
+  const [api, setApi] = React.useState<CarouselApi>();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!api) return;
 
-    timerRef.current = setInterval(() => {
-      api.scrollNext();
-    }, 5000);
+    const startAutoplay = () => {
+      timerRef.current = setInterval(() => {
+        api.scrollNext();
+      }, 5000);
+    };
+
+    startAutoplay();
+
+    api.on("pointerDown", () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    });
+
+    api.on("select", () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      startAutoplay();
+    });
 
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [api]);
 
   return (
-    <section className="w-full">
+    <section className="w-full py-8">
       <h2 className="text-2xl font-serif font-bold mb-6 text-center">Announcements & Activities</h2>
-      <Carousel className="w-full max-w-4xl mx-auto" setApi={setApi} opts={{ loop: true }}> {/* Pass setApi and opts */}
+      <Carousel className="w-full max-w-6xl mx-auto" setApi={setApi} opts={{ loop: true }}>
         <CarouselContent>
           {announcements.map((announcement) => (
             <CarouselItem key={announcement.id}>
-              <div className="p-1">
-                <Card> {/* Removed a tag wrapping the Card */}
-                  <CardContent className="flex flex-col md:flex-row items-center justify-center p-6 md:p-8 gap-6">
-                    <div className="relative w-full md:w-1/2 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src={announcement.imageUrl}
-                        alt={announcement.title}
-                        fill
-                        className="object-cover"
-                      />
+              <div className="flex flex-col md:flex-row items-center overflow-hidden rounded-lg bg-card/50 md:h-80">
+                <div className="relative w-full md:w-3/5 h-64 md:h-full">
+                  <Image
+                    src={announcement.imageUrl}
+                    alt={announcement.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="w-full md:w-2/5 p-6 md:p-8 text-center md:text-left flex flex-col justify-center">
+                  <h3 className="text-2xl font-bold mb-3">{announcement.title}</h3>
+                  <p className="text-muted-foreground mb-5">{announcement.description}</p>
+                  {announcement.link && (
+                    <div className="flex justify-center md:justify-start">
+                      <Button asChild>
+                        <Link href={announcement.link}>Learn More</Link>
+                      </Button>
                     </div>
-                    <div className="w-full md:w-1/2 text-center md:text-left">
-                      <h3 className="text-xl font-bold mb-2">{announcement.title}</h3>
-                      <p className="text-muted-foreground mb-4">{announcement.description}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                  )}
+                </div>
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="hidden md:flex" />
+        <CarouselNext className="hidden md:flex" />
       </Carousel>
     </section>
   );

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Download, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -61,20 +61,12 @@ const galleryImages: GalleryImage[] = [
 
 export const ImageGallery: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const openDialog = (image: GalleryImage) => {
     setSelectedImage(image);
-    setIsDialogOpen(true);
-  };
-
-  const closeDialog = () => {
-    setSelectedImage(null);
-    setIsDialogOpen(false);
   };
 
   const handleShare = (image: GalleryImage) => {
-    // Placeholder for actual share functionality
     if (navigator.share) {
       navigator.share({
         title: image.alt,
@@ -88,57 +80,76 @@ export const ImageGallery: React.FC = () => {
   return (
     <section className="w-full py-8">
       <h2 className="text-2xl font-serif font-bold mb-6 text-center">Our Gallery</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {galleryImages.map((image) => (
-          <div key={image.id} className="relative overflow-hidden group cursor-pointer border border-gray-200 rounded-sm" onClick={() => openDialog(image)}>
+          <div key={image.id} className="relative overflow-hidden group cursor-pointer" onClick={() => openDialog(image)}>
             <Image
               src={image.src}
               alt={image.alt}
               width={400}
               height={300}
-              className="w-full h-auto object-cover aspect-video"
+              className="w-full h-auto object-cover aspect-square"
             />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button size="icon" variant="secondary" asChild>
-                <a href={image.downloadLink} download>
-                  <Download className="h-5 w-5" />
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20" asChild>
+                <a href={image.downloadLink} download onClick={(e) => e.stopPropagation()}>
+                  <Download className="h-6 w-6" />
                 </a>
               </Button>
-              <Button size="icon" variant="secondary" onClick={(e) => { e.stopPropagation(); handleShare(image); }}>
-                <Share2 className="h-5 w-5" />
+              <Button size="icon" variant="ghost" className="text-white hover:bg-white/20" onClick={(e) => { e.stopPropagation(); handleShare(image); }}>
+                <Share2 className="h-6 w-6" />
               </Button>
             </div>
           </div>
         ))}
       </div>
 
-      {selectedImage && (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[600px] p-0">
-            <DialogHeader className="p-4 pb-0">
-              <DialogTitle>{selectedImage.alt}</DialogTitle>
-            </DialogHeader>
-            <div className="relative w-full aspect-video">
-              <Image
-                src={selectedImage.src}
-                alt={selectedImage.alt}
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="flex justify-center gap-4 p-4">
-              <Button asChild>
-                <a href={selectedImage.downloadLink} download>
-                  <Download className="mr-2 h-4 w-4" /> Download
-                </a>
-              </Button>
-              <Button variant="outline" onClick={() => handleShare(selectedImage)}>
-                <Share2 className="mr-2 h-4 w-4" /> Share
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+  {selectedImage && (
+  <Dialog open={!!selectedImage} onOpenChange={(o) => !o && setSelectedImage(null)}>
+    <DialogContent
+      className="
+        w-screen
+        h-screen
+        max-w-none
+        max-h-none
+        p-0
+        bg-black/95
+        border-none
+        overflow-hidden
+      "
+    >
+      <DialogTitle className="sr-only">
+        {selectedImage.alt}
+      </DialogTitle>
+
+      <div className="relative w-full h-full">
+  <div className="absolute inset-0">
+    <Image
+      src={selectedImage.src}
+      alt={selectedImage.alt}
+      fill
+      sizes="100vw"
+      className="object-contain"
+      priority
+    />
+  </div>
+
+  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 bg-black/60 p-4 rounded-lg z-10">
+    <Button asChild>
+      <a href={selectedImage.downloadLink} download>
+        <Download className="mr-2 h-4 w-4" /> Download
+      </a>
+    </Button>
+    <Button variant="outline" onClick={() => handleShare(selectedImage)}>
+      <Share2 className="mr-2 h-4 w-4" /> Share
+    </Button>
+  </div>
+</div>
+
+    </DialogContent>
+  </Dialog>
+)}
+
     </section>
   );
 };
