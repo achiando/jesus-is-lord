@@ -1,19 +1,20 @@
 "use client"
 
-import { AnnouncementCarousel } from "@/app/_components/AnnouncementCarousel";
 import { RadioPlayer } from "@/components/Player/RadioPlayer";
-import { Mission } from "@/components/shared/Mission";
-import { dailyPrograms } from "@/data/programs";
 import { cn } from "@/lib/utils";
-import { Clock, Globe, Languages } from "lucide-react";
+import { Clock, Globe, Languages, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FloatingChat } from "./FloatingChat";
+import { dailyPrograms } from "@/data/programs";
+import { IntegratedChat } from "./IntegratedChat";
+import { useRadioPlayer } from "@/lib/context/RadioPlayerContext";
+import { Button } from "@/components/ui/button";
+import { LiveIndicator } from "@/components/shared/LiveIndicator"; // Assuming LiveIndicator exists
 
 export function ListenClient() {
   const [now, setNow] = useState(new Date());
+  const { isLive, currentProgram } = useRadioPlayer();
 
   useEffect(() => {
-    // Update the time every minute to re-evaluate the schedule
     const timer = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
@@ -37,15 +38,37 @@ export function ListenClient() {
     }
   };
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: "Jesus Is Lord Radio - Live Broadcast",
+        text: `Tuning into ${currentProgram?.title || 'the live broadcast'} on Jesus Is Lord Radio!`,
+        url: window.location.href,
+      }).catch((error) => console.error('Error sharing:', error));
+    } else {
+      alert('Share functionality not supported in this browser.');
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto w-full py-8 md:py-12 px-4">
+    <div className="container py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Player and Info */}
         <div className="lg:col-span-7 flex flex-col gap-8">
           <div className="space-y-4">
-            <h1 className="text-4xl font-serif font-bold text-primary">Live Broadcast</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-4xl font-serif font-bold text-primary">Live Broadcast</h1>
+              {isLive && <LiveIndicator size="md" />}
+            </div>
             <p className="text-lg text-muted-foreground">Tuning in from around the world to hear the Word of God.</p>
           </div>
-          <RadioPlayer variant="page-full" />
+
+          <div className="relative flex flex-col items-center justify-center p-4 bg-secondary/50 rounded-lg shadow-lg">
+            <RadioPlayer variant="page-full" />
+            <Button variant="outline" className="mt-4" onClick={handleShare}>
+              <Share2 className="mr-2 h-4 w-4" /> Share Broadcast
+            </Button>
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
             {[
@@ -64,9 +87,10 @@ export function ListenClient() {
           </div>
         </div>
 
-        <div className="lg:col-span-5 space-y-6">
+        {/* Right Column: Today's Schedule & Chat */}
+        <div className="lg:col-span-5 space-y-6 flex flex-col">
           <h3 className="text-xl font-serif font-bold">Today's Schedule</h3>
-          <div className="space-y-4">
+          <div className="space-y-4 flex-grow overflow-y-auto lg:max-h-[40vh]">
             {todaysPrograms.map((item, i) => {
               const status = getProgramStatus(item);
               return (
@@ -92,14 +116,13 @@ export function ListenClient() {
               );
             })}
           </div>
+          
+          {/* Integrated Chat for Desktop */}
+          <div className="flex-grow h-[50vh] lg:h-auto">
+            <IntegratedChat />
+          </div>
         </div>
-     
       </div>
-      <div className="max-w-7xl mx-auto w-full mt-8">
-        <Mission />
-        <AnnouncementCarousel />
-      </div>
-      <FloatingChat />
     </div>
   );
 }

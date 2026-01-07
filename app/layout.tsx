@@ -9,8 +9,8 @@ import { MobileNav } from "@/components/Navigation/MobileNav";
 import { MiniPlayerWrapper } from "@/components/Player/MiniPlayerWrapper";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
-import { ChatProvider } from "@/lib/context/ChatContext";
 import { AnalyticsProvider } from "@/lib/context/AnalyticsContext"; // Import AnalyticsProvider
+import { ChatProvider } from "@/lib/context/ChatContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,14 +26,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("min-h-screen bg-background font-sans antialiased p-2", inter.className)}>
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        "flex flex-col items-center",
+        inter.className
+      )}>
         <RadioPlayerProvider>
           <ChatProvider>
             <AnalyticsProvider>
-              <Header />
-              <main>{children} <Footer /></main>
-              <MobileNav />
-              <MiniPlayerWrapper />
+              <div className="w-full max-w-[2000px] px-4">
+                <Header />
+                <main className="w-full">{children}</main>
+                <Footer />
+                <MobileNav />
+                <MiniPlayerWrapper />
+              </div>
               <Analytics />
             </AnalyticsProvider>
           </ChatProvider>
