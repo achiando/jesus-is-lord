@@ -1,4 +1,5 @@
 export interface DailyProgram {
+  id: string;
   title: string;
   displayTime: string; // "05:00 AM"
   startTime: string; // "05:00" (24-hour format)
@@ -9,6 +10,7 @@ export interface DailyProgram {
 
 export const dailyPrograms: DailyProgram[] = [
   {
+    id: 'nightly-prayers',
     displayTime: "12:00 AM",
     title: "Nightly Prayers & Psalms",
     startTime: "00:00",
@@ -17,6 +19,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Audio Bible",
   },
   {
+    id: 'morning-glory',
     displayTime: "05:00 AM",
     title: "Morning Glory Prayer",
     startTime: "05:00",
@@ -25,6 +28,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Prayer Team",
   },
   {
+    id: 'gospel-mix',
     displayTime: "07:00 AM",
     title: "Gospel Music Mix",
     startTime: "07:00",
@@ -33,6 +37,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Various Artists",
   },
   {
+    id: 'highway-of-holiness',
     displayTime: "09:00 AM",
     title: "The Highway of Holiness",
     startTime: "09:00",
@@ -41,6 +46,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Pastor John",
   },
   {
+    id: 'sermon-rebroadcast',
     displayTime: "11:00 AM",
     title: "Sermon Rebroadcast",
     startTime: "11:00",
@@ -49,6 +55,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Archive",
   },
   {
+    id: 'lunch-hour',
     displayTime: "12:00 PM",
     title: "Lunch Hour Service",
     startTime: "12:00",
@@ -57,6 +64,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Bishop David",
   },
   {
+    id: 'instrumental-worship',
     displayTime: "02:00 PM",
     title: "Instrumental Worship",
     startTime: "14:00",
@@ -65,6 +73,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Various Artists",
   },
   {
+    id: 'voices-of-prophets',
     displayTime: "03:00 PM",
     title: "Voices of the Prophets",
     startTime: "15:00",
@@ -73,6 +82,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Guest Speaker",
   },
   {
+    id: 'afternoon-drive',
     displayTime: "04:00 PM",
     title: "Afternoon Drive Gospel Hits",
     startTime: "16:00",
@@ -81,6 +91,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Various Artists",
   },
   {
+    id: 'evening-worship',
     displayTime: "08:00 PM",
     title: "Evening Word & Worship",
     startTime: "20:00",
@@ -89,6 +100,7 @@ export const dailyPrograms: DailyProgram[] = [
     speaker: "Worship Team",
   },
   {
+    id: 'worship-uninterrupted',
     displayTime: "09:00 PM",
     title: "Worship Uninterrupted",
     startTime: "21:00",

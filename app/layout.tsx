@@ -1,4 +1,4 @@
-import { RadioPlayerProvider } from "@/lib/context/RadioPlayerContext"; // Import RadioPlayerProvider
+import { RadioPlayerProvider } from "@/lib/context/RadioPlayerContext";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
@@ -7,8 +7,10 @@ import "./globals.css";
 
 import { MobileNav } from "@/components/Navigation/MobileNav";
 import { MiniPlayerWrapper } from "@/components/Player/MiniPlayerWrapper";
-import { Footer } from "@/components/shared/Footer"; // Import the Footer
+import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
+import { ChatProvider } from "@/lib/context/ChatContext";
+import { AnalyticsProvider } from "@/lib/context/AnalyticsContext"; // Import AnalyticsProvider
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +28,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn("min-h-screen bg-background font-sans antialiased p-2", inter.className)}>
         <RadioPlayerProvider>
-         <Header /> {/* New Header component */}
-          <main>{children} <Footer /></main>
-         
-          <MobileNav /> {/* New MobileNav component */}
-          <MiniPlayerWrapper /> {/* Mini-player wrapper */}
-          <Analytics />
+          <ChatProvider>
+            <AnalyticsProvider>
+              <Header />
+              <main>{children} <Footer /></main>
+              <MobileNav />
+              <MiniPlayerWrapper />
+              <Analytics />
+            </AnalyticsProvider>
+          </ChatProvider>
         </RadioPlayerProvider>
       </body>
     </html>
