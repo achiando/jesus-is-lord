@@ -1,11 +1,9 @@
-import { Suspense } from "react";
-import { TeachingsContent } from "./_components/TeachingsContent";
-
-// Import the data directly from the JSON cache files.
-import { SpotifyEpisode, WordPressPost, YouTubeVideo } from "@/app/actions/data-fetchers";
 import spotifyData from '@/data/spotify-cache.json';
 import wordpressData from '@/data/wordpress-cache.json';
 import youtubeData from '@/data/youtube-cache.json';
+import { Suspense } from "react";
+import { SpotifyEpisode, WordPressPost, YouTubeVideo } from "../actions/data-fetchers";
+import { TeachingsPageClient } from "./_components/TeachingsPageClient"; // Changed import
 
 // This function extracts unique years from all content sources
 export function getUniqueYears(
@@ -37,7 +35,7 @@ export default function TeachingsPage() {
         <p className="text-lg text-muted-foreground">Explore a rich collection of sermons, teachings, and articles.</p>
       </div>
       <Suspense fallback={<div className="text-center">Loading Teachings...</div>}>
-        <TeachingsContent 
+        <TeachingsPageClient // Changed component
           videos={youtubeData.videos}
           episodes={spotifyData.episodes}
           articles={wordpressData.articles}
