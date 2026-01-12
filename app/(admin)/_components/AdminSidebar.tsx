@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, List, MessageSquare, Calendar, BarChartHorizontal } from 'lucide-react';
+import { LayoutDashboard, List, MessageSquare, Calendar, BarChartHorizontal, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -20,6 +20,11 @@ const sidebarNavItems = [
     title: "Events",
     href: "/admin/events",
     icon: <Calendar className="h-4 w-4" />,
+  },
+  {
+    title: "Teachings",
+    href: "/admin/teachings",
+    icon: <BookOpen className="h-4 w-4" />,
   },
   {
     title: "Live Chat",

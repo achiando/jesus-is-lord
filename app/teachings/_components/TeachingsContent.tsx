@@ -1,81 +1,135 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { audioPlaylists, videoPlaylists, documents } from "@/data/teachings";
-import { Search } from "lucide-react";
-import { useState } from "react";
-import { SpotifyEpisodeEmbed } from "./SpotifyEpisodeEmbed";
-import { YouTubePlaylistEmbed } from "./YouTubePlaylistEmbed";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Clapperboard, Mic, Newspaper } from "lucide-react";
 import { DocumentCard } from "./DocumentCard";
+import { YouTubeVideo, SpotifyEpisode, WordPressPost } from "@/app/actions/data-fetchers";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
 
-export function TeachingsContent() {
-    const [searchQuery, setSearchQuery] = useState("");
+// Props for the main component
+interface TeachingsContentProps {
+  videos: YouTubeVideo[];
+  episodes: SpotifyEpisode[];
+  articles: WordPressPost[];
+  years: string[];
+}
 
-    const filteredDocuments = documents.filter(doc =>
-        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+// Props for the reusable filter controls
+interface FilterControlsProps {
+  year: string;
+  onYearChange: (year: string) => void;
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+  years: string[];
+}
+
+// A reusable component for the filter controls to avoid duplicating JSX
+const FilterControls: React.FC<FilterControlsProps> = ({ year, onYearChange, searchTerm, onSearchChange, years }) => (
+  <div className="flex flex-col sm:flex-row gap-2 mb-6">
+    <Input 
+      placeholder="Search in this category..." 
+      className="flex-grow"
+      value={searchTerm}
+      onChange={(e) => onSearchChange(e.target.value)}
+    />
+    <Select value={year} onValueChange={onYearChange}>
+      <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectValue placeholder="All Years" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Years</SelectItem>
+        {(years || []).map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  </div>
+);
+
+// --- Card Components (re-included for completeness) ---
+const VideoCard = ({ video }: { video: YouTubeVideo }) => (
+  <Link href={`https://www.youtube.com/watch?v=${video.videoId}`} target="_blank" rel="noopener noreferrer">
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+      <CardHeader className="p-0"><div className="aspect-video relative"><Image src={video.thumbnailUrl} alt={video.title} fill className="object-cover"/></div></CardHeader>
+      <CardContent className="flex-grow p-4"><CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle><CardDescription className="mt-2 text-sm line-clamp-3">{video.description}</CardDescription></CardContent>
+    </Card>
+  </Link>
+);
+const EpisodeCard = ({ episode }: { episode: SpotifyEpisode }) => (
+  <Link href={episode.url} target="_blank" rel="noopener noreferrer">
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+      <CardHeader className="p-0"><div className="aspect-square relative"><Image src={episode.thumbnailUrl} alt={episode.title} fill className="object-cover"/></div></CardHeader>
+      <CardContent className="flex-grow p-4"><CardTitle className="text-lg line-clamp-2">{episode.title}</CardTitle></CardContent>
+    </Card>
+  </Link>
+);
+
+
+export function TeachingsContent({ videos, episodes, articles, years }: TeachingsContentProps) {
+    // State for Video filters
+    const [videoYear, setVideoYear] = useState('');
+    const [videoSearch, setVideoSearch] = useState('');
+
+    // State for Audio filters
+    const [audioYear, setAudioYear] = useState('');
+    const [audioSearch, setAudioSearch] = useState('');
+
+    // State for Article filters
+    const [articleYear, setArticleYear] = useState('');
+    const [articleSearch, setArticleSearch] = useState('');
+
+    const filterItems = (items: any[], year: string, searchTerm: string, dateKey: string, titleKey: string, descKey: string) => {
+        const lowercasedSearchTerm = searchTerm.toLowerCase();
+        return items.filter(item => {
+            const yearMatch = !year || year === 'all' || item[dateKey]?.startsWith(year);
+            const searchMatch = !searchTerm || 
+              item[titleKey]?.toLowerCase().includes(lowercasedSearchTerm) ||
+              item[descKey]?.toLowerCase().includes(lowercasedSearchTerm);
+            return yearMatch && searchMatch;
+        });
+    };
+
+    const filteredVideos = useMemo(() => filterItems(videos, videoYear, videoSearch, 'publishedAt', 'title', 'description'), [videos, videoYear, videoSearch]);
+    const filteredEpisodes = useMemo(() => filterItems(episodes, audioYear, audioSearch, 'releaseDate', 'title', 'description'), [episodes, audioYear, audioSearch]);
+    const filteredArticles = useMemo(() => filterItems(articles, articleYear, articleSearch, 'date', 'title', 'excerpt'), [articles, articleYear, articleSearch]);
 
     return (
-        <>
-            <div className="mb-8 space-y-4">
-                <h1 className="text-3xl font-serif font-bold text-primary">Teachings Library</h1>
-                <p className="text-lg text-muted-foreground">Explore a rich collection of sermons, teachings, and articles.</p>
-            </div>
+        <Tabs defaultValue="video" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8 h-14">
+                <TabsTrigger value="video" className="text-base"><Clapperboard className="mr-2 h-5 w-5" />Video ({filteredVideos.length})</TabsTrigger>
+                <TabsTrigger value="audio" className="text-base"><Mic className="mr-2 h-5 w-5" />Audio ({filteredEpisodes.length})</TabsTrigger>
+                <TabsTrigger value="articles" className="text-base"><Newspaper className="mr-2 h-5 w-5" />Articles ({filteredArticles.length})</TabsTrigger>
+            </TabsList>
 
-            <div className="mb-8 max-w-2xl">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Search articles and documents..."
-                        className="pl-10"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+            <TabsContent value="video">
+                <FilterControls year={videoYear} onYearChange={setVideoYear} searchTerm={videoSearch} onSearchChange={setVideoSearch} years={years} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredVideos.length > 0 ? filteredVideos.map((video) => (
+                        <VideoCard key={video.id} video={video} />
+                    )) : <p>No videos match your criteria.</p>}
                 </div>
-            </div>
+            </TabsContent>
 
-            <div>
-                <Tabs defaultValue="audio" className="w-full">
-                    <TabsList className="flex w-full mb-8 h-12 overflow-x-auto">
-                        <TabsTrigger value="audio" className="text-base">Audio</TabsTrigger>
-                        <TabsTrigger value="video" className="text-base">Video</TabsTrigger>
-                        <TabsTrigger value="articles" className="text-base">Articles & Docs</TabsTrigger>
-                    </TabsList>
+            <TabsContent value="audio">
+                <FilterControls year={audioYear} onYearChange={setAudioYear} searchTerm={audioSearch} onSearchChange={setAudioSearch} years={years} />
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {filteredEpisodes.length > 0 ? filteredEpisodes.map((episode) => (
+                        <EpisodeCard key={episode.id} episode={episode} />
+                    )) : <p>No audio matches your criteria.</p>}
+                </div>
+            </TabsContent>
 
-                    <TabsContent value="audio" className="space-y-12">
-                        {audioPlaylists.map(playlist => (
-                            <div key={playlist.playlistId}>
-                                <h3 className="text-2xl font-serif font-bold mb-2">{playlist.title}</h3>
-                                <p className="text-muted-foreground mb-4">{playlist.description}</p>
-                                <SpotifyEpisodeEmbed playlistId={playlist.playlistId} />
-                            </div>
-                        ))}
-                    </TabsContent>
-
-                    <TabsContent value="video" className="space-y-12">
-                        {videoPlaylists.map(playlist => (
-                            <div key={playlist.playlistId}>
-                                <YouTubePlaylistEmbed
-                                    playlistId={playlist.playlistId}
-                                    title={playlist.title}
-                                />
-                                <p className="text-muted-foreground mt-4">{playlist.description}</p>
-                            </div>
-                        ))}
-                    </TabsContent>
-
-                    <TabsContent value="articles">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredDocuments.map((doc, i) => (
-                                <DocumentCard key={i} {...doc} />
-                            ))}
-                        </div>
-                    </TabsContent>
-                </Tabs>
-            </div>
-        </>
+            <TabsContent value="articles">
+                <FilterControls year={articleYear} onYearChange={setArticleYear} searchTerm={articleSearch} onSearchChange={setArticleSearch} years={years} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredArticles.length > 0 ? filteredArticles.map((doc) => (
+                        <DocumentCard key={doc.id} title={doc.title} description={doc.excerpt} link={doc.link} type="web-link" />
+                    )) : <p>No articles match your criteria.</p>}
+                </div>
+            </TabsContent>
+        </Tabs>
     );
 }
