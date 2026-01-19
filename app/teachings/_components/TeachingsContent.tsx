@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useMemo } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SpotifyEpisode, WordPressPost, YouTubeVideo } from "@/app/actions/data-fetchers";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clapperboard, Mic, Newspaper } from "lucide-react";
-import { DocumentCard } from "./DocumentCard";
-import { YouTubeVideo, SpotifyEpisode, WordPressPost } from "@/app/actions/data-fetchers";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo, useState } from 'react';
+import { DocumentCard } from "./DocumentCard";
 
 // Props for the main component
 interface TeachingsContentProps {
@@ -98,10 +98,19 @@ export function TeachingsContent({ videos, episodes, articles, years }: Teaching
 
     return (
         <Tabs defaultValue="video" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8 h-14">
-                <TabsTrigger value="video" className="text-base"><Clapperboard className="mr-2 h-5 w-5" />Video ({filteredVideos.length})</TabsTrigger>
-                <TabsTrigger value="audio" className="text-base"><Mic className="mr-2 h-5 w-5" />Audio ({filteredEpisodes.length})</TabsTrigger>
-                <TabsTrigger value="articles" className="text-base"><Newspaper className="mr-2 h-5 w-5" />Articles ({filteredArticles.length})</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 gap-1 mb-6 sm:gap-2 sm:mb-8 h-auto sm:h-14">
+                <TabsTrigger value="video" className="text-xs sm:text-base px-1 sm:px-4 py-2 sm:py-0">
+                    <Clapperboard className="hidden sm:inline-block mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="sm:inline">Video</span> <span className="hidden sm:inline">({filteredVideos.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="audio" className="text-xs sm:text-base px-1 sm:px-4 py-2 sm:py-0">
+                    <Mic className="hidden sm:inline-block mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="sm:inline">Audio</span> <span className="hidden sm:inline">({filteredEpisodes.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="articles" className="text-xs sm:text-base px-1 sm:px-4 py-2 sm:py-0">
+                    <Newspaper className="hidden sm:inline-block mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="sm:inline">Articles</span> <span className="hidden sm:inline">({filteredArticles.length})</span>
+                </TabsTrigger>
             </TabsList>
 
             <TabsContent value="video">
