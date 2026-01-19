@@ -29,7 +29,7 @@ export interface WordPressPost {
     title: string;
     excerpt: string;
     link: string;
-    featuredImageUrl?: string;
+    featuredImageUrl?: string | null;
 }
 
 
